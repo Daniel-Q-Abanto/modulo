@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from .models import Usuario, Diseño, Personalizacion, Orden, Producto, HistorialIA, RolPermiso
 
+
+
+
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
@@ -50,10 +53,13 @@ class ProductoSerializer(serializers.ModelSerializer):
         fields = ['id_producto', 'nombre_producto', 'descripcion', 'precio', 'stock', 'imagen_producto']
 
 class HistorialIASerializer(serializers.ModelSerializer):
-    usuario = UsuarioSerializer(read_only=True)
+    usuario = UsuarioSerializer(read_only=True)  # Solo lectura para usuario
+    
     class Meta:
         model = HistorialIA
         fields = ['id_historial', 'usuario', 'prompt', 'imagen_generada', 'fecha_generacion']
+
+
 
 class RolPermisoSerializer(serializers.ModelSerializer):
     class Meta:

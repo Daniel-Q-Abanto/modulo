@@ -1,10 +1,10 @@
-// src/components/Services.js
 import React from 'react';
 import styled from 'styled-components';
 
 const ServicesContainer = styled.section`
-  padding: 20px;
+  padding: 50px;
   text-align: center;
+  background-color: #f1f1f1;
 `;
 
 const Title = styled.h2`
@@ -13,10 +13,24 @@ const Title = styled.h2`
   margin-bottom: 20px;
 `;
 
+const ServiceDescription = styled.p`
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: #666;
+`;
+
 const Services = () => (
-  <ServicesContainer>
+  <ServicesContainer id="services"> {/* ID necesario para scroll */}
     <Title>Nuestros Servicios</Title>
-    {/* Aquí podrías agregar una lista de servicios o tarjetas si necesitas más detalles */}
+    <ServiceDescription>
+      Descubre los servicios que ofrecemos para ayudarte a personalizar tus diseños únicos:
+      <ul>
+        <li>Diseño personalizado de prendas.</li>
+        <li>Asesoría en tendencias de moda.</li>
+        <li>Producción de alta calidad.</li>
+        <li>Entrega rápida y eficiente.</li>
+      </ul>
+    </ServiceDescription>
   </ServicesContainer>
 );
 

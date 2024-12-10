@@ -17,6 +17,10 @@ from .serializers import (
     RolPermisoSerializer
 )
 
+
+
+
+
 # Vista para registro de usuario
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -109,11 +113,23 @@ class ProductoViewSet(ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+
 class HistorialIAViewSet(ModelViewSet):
+    """
+    ViewSet para manejar el historial de prompts.
+    """
     queryset = HistorialIA.objects.all()
-    serializer_class = HistorialIASerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+    serializer_class = HistorialIASerializer
+
+    def get_queryset(self):
+        # Filtrar solo los historiales del usuario autenticado
+        return HistorialIA.objects.filter(usuario=self.request.user).order_by('-fecha_generacion')
+
+    def perform_create(self, serializer):
+        # Asociar automáticamente el historial al usuario autenticado
+        serializer.save(usuario=self.request.user)
 
 class RolPermisoViewSet(ModelViewSet):
     queryset = RolPermiso.objects.all()

@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.contrib.auth.hashers import make_password, check_password
 
 
+# Gestor personalizado de usuarios
 class UsuarioManager(BaseUserManager):
     def create_user(self, correo, password=None, **extra_fields):
         if not correo:
@@ -21,6 +22,8 @@ class UsuarioManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', True)
         return self.create_user(correo, password, **extra_fields)
 
+
+# Modelo de usuario
 class Usuario(AbstractBaseUser, PermissionsMixin):
     id_usuario = models.AutoField(primary_key=True)
     nombre_usuario = models.CharField(max_length=100)
@@ -47,6 +50,20 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     class Meta:
         db_table = 'usuarios'
 
+
+# Modelo de historial de IA
+class HistorialIA(models.Model):
+    id_historial = models.AutoField(primary_key=True)
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, db_column='id_usuario')
+    prompt = models.TextField()  # Texto ingresado por el usuario
+    imagen_generada = models.CharField(max_length=255, blank=True, null=True)  # En este caso puede quedar nulo
+    fecha_generacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Historial de {self.usuario.nombre_usuario}: {self.prompt[:30]}..."
+
+    class Meta:
+        db_table = 'historial_IA'
 
 # Modelo de Diseños
 class Diseño(models.Model):
@@ -128,20 +145,6 @@ class Producto(models.Model):
     class Meta:
         db_table = 'productos'
 
-
-# Modelo de Historial de IA
-class HistorialIA(models.Model):
-    id_historial = models.AutoField(primary_key=True)
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, db_column='id_usuario')
-    prompt = models.TextField()
-    imagen_generada = models.CharField(max_length=255)
-    fecha_generacion = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Historial de {self.usuario.nombre_usuario}"
-
-    class Meta:
-        db_table = 'historial_IA'
 
 
 # Modelo de Roles y Permisos

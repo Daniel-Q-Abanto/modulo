@@ -1,7 +1,6 @@
-// src/components/Login.js
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const LoginContainer = styled.div`
   display: flex;
@@ -64,6 +63,7 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -79,11 +79,10 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Guarda el token en el localStorage y redirige a la página principal
         localStorage.setItem('access_token', data.access);
-        navigate('/');
+        const redirectPath = location.state?.from || '/prompts';
+        navigate(redirectPath);
       } else {
-        // Maneja errores de login
         setError('Credenciales incorrectas. Por favor, intenta nuevamente.');
       }
     } catch (error) {
