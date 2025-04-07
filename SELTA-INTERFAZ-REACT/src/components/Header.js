@@ -1,33 +1,55 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Link as ScrollLink, animateScroll as scroll } from 'react-scroll';
+import { animateScroll as scroll } from 'react-scroll';
+import florImage from '../assets/flor.png';
 
 const HeaderContainer = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  padding: 15px 25px;
   background-color: #f7f7f7;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-const Logo = styled.div`
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #333;
+const LogoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
   cursor: pointer;
+`;
+
+const LogoImage = styled.img`
+  width: 35px;
+  height: 35px;
+`;
+
+const LogoText = styled.div`
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+
+  span {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #222;
+    text-align: left;
+  }
 `;
 
 const Nav = styled.nav`
   display: flex;
   gap: 20px;
 
-  a {
-    text-decoration: none;
+  button.link-button {
+    background: none;
+    border: none;
+    cursor: pointer;
     color: #333;
     font-size: 1rem;
-    font-weight: bold;
+    font-weight: 800;
+    padding: 0;
 
     &:hover {
       color: #ff6868;
@@ -35,7 +57,7 @@ const Nav = styled.nav`
   }
 `;
 
-const Button = styled.button`
+const ActionButton = styled.button`
   background-color: #ff6868;
   color: white;
   border: none;
@@ -43,11 +65,13 @@ const Button = styled.button`
   border-radius: 20px;
   cursor: pointer;
   font-size: 1rem;
+  font-weight: 800;
 
   &:hover {
     background-color: #e65555;
   }
 `;
+
 
 const Header = () => {
   const navigate = useNavigate();
@@ -56,10 +80,8 @@ const Header = () => {
 
   const handleScrollToSection = (section) => {
     if (location.pathname !== '/') {
-      // Redirigir a la página principal antes de hacer scroll
       navigate('/', { state: { scrollTo: section } });
     } else {
-      // Hacer scroll directamente si ya estás en la página principal
       scroll.scrollTo(section);
     }
   };
@@ -74,13 +96,20 @@ const Header = () => {
 
   return (
     <HeaderContainer>
-      <Logo onClick={() => navigate('/')}>SELTA Confecciones</Logo>
+      <LogoContainer onClick={() => navigate('/')}>
+        <LogoImage src={florImage} alt="Logo flor" />
+        <LogoText>
+          <span>SELTA</span>
+          <span>CONFECCIONES</span>
+        </LogoText>
+      </LogoContainer>
+
       <Nav>
-        <a onClick={() => handleScrollToSection('how-it-works')}>Inicio</a>
-        <a onClick={() => handleScrollToSection('about')}>Acerca de</a>
-        <a onClick={() => handleScrollToSection('services')}>Servicios</a>
-        <Button onClick={handleExploreClick}>¡Comienza ya!</Button>
-        {token && <Button onClick={() => navigate('/profile')}>Perfil</Button>}
+        <button className="link-button" onClick={() => handleScrollToSection('how-it-works')}>Inicio</button>
+        <button className="link-button" onClick={() => handleScrollToSection('about')}>Acerca de</button>
+        <button className="link-button" onClick={() => handleScrollToSection('services')}>Servicios</button>
+        <ActionButton onClick={handleExploreClick}>¡Comienza ya!</ActionButton>
+        {token && <ActionButton onClick={() => navigate('/profile')}>Perfil</ActionButton>}
       </Nav>
     </HeaderContainer>
   );

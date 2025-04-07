@@ -1,118 +1,118 @@
-// src/components/About.js
 import React from 'react';
 import styled from 'styled-components';
-import hombreImage from '../assets/hombre.png';
 import calidadIcon from '../assets/calidad.png';
 import innovacionIcon from '../assets/innovacion.png';
-import cuadritoImage from '../assets/cuadrito.png';
+import creatividadIcon from '../assets/creatividad.png'; // Imagen nueva sugerida
 
-const AboutContainer = styled.section`
-  padding: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1200px;
+const AboutSection = styled.section`
+  background: linear-gradient(to right, #ffe5e5, #ffffff);
+  padding: 100px 40px;
+  width: 100%;
+`;
+
+const Container = styled.div`
+  max-width: 1400px;
   margin: 0 auto;
 `;
 
-const TextSection = styled.div`
-  width: 40%;
-  text-align: left;
-`;
-
 const Title = styled.h2`
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #333;
-  font-family: Arial, sans-serif;
+  font-size: 3.2rem;
+  font-weight: 900;
+  text-align: center;
+  color: #1a1a1a;
+  margin-bottom: 25px;
 `;
 
 const Description = styled.p`
-  font-size: 1rem;
-  color: #666;
-  line-height: 1.5;
-`;
-
-const IconContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-top: 20px;
-`;
-
-const IconItem = styled.div`
+  font-size: 1.2rem;
   text-align: center;
-  margin-right: 20px;
+  color: #444;
+  max-width: 1000px;
+  margin: 0 auto 60px;
+  line-height: 1.8;
+`;
+
+const CardsContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+`;
+
+const Card = styled.div`
+  background: #ffffff;
+  padding: 40px 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  flex: 1;
+  min-width: 280px;
+  max-width: 350px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.2);
+  }
 
   img {
-    width: 50px;
+    width: 75px;
     height: auto;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
   }
 
   h4 {
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #333;
+    font-size: 1.5rem;
+    color: #c86d6d;
+    margin-bottom: 10px;
   }
 
   p {
-    font-size: 0.9rem;
-    color: #666;
-    max-width: 120px;
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
   }
 `;
 
-// Agrandar `CuadritoImage` y centrarlo entre secciones
-const CuadritoImage = styled.img`
-  width: 120px; // Ajusta el tamaño según sea necesario
-  height: auto;
-  margin: 0 30px; // Ajusta el espacio horizontal si es necesario
-`;
+const About = () => {
+  return (
+    <AboutSection>
+      <Container>
+        <Title>¿A qué nos dedicamos?</Title>
+        <Description>
+          En Selta Confecciones, brindamos soluciones inteligentes de personalización de prendas
+          con ayuda de la inteligencia artificial. Nuestra misión es fusionar tecnología y creatividad
+          para ofrecer productos que reflejen tu estilo único de forma original, creativa y accesible.
+        </Description>
 
-const ImageContainer = styled.div`
-  width: 40%;
-  display: flex;
-  justify-content: center;
-`;
+        <CardsContainer>
+          <Card>
+            <img src={calidadIcon} alt="Calidad" />
+            <h4>Calidad</h4>
+            <p>
+              Nos comprometemos a ofrecer productos de alta calidad, cuidando cada detalle en el proceso.
+            </p>
+          </Card>
 
-const ModeloContainer = styled.div`
-  background-color: #dde7ee;
-  border-radius: 20px;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-width: 300px;
-`;
+          <Card>
+            <img src={innovacionIcon} alt="Innovación" />
+            <h4>Innovación</h4>
+            <p>
+              Aplicamos tecnología avanzada para brindarte diseños únicos y personalizables al instante.
+            </p>
+          </Card>
 
-const About = () => (
-  <AboutContainer>
-    <TextSection>
-      <Title>¿A qué nos dedicamos?</Title>
-      <Description>
-        En Selta Confecciones, nos especializamos en ofrecer opciones de personalización para prendas de vestir, utilizando tecnología avanzada e inteligencia artificial. Nuestro objetivo es ayudar a nuestros clientes a expresar su estilo personal de manera única y accesible. Nos esforzamos por ofrecer calidad, innovación y creatividad en cada diseño.
-      </Description>
-      <IconContainer>
-        <IconItem>
-          <img src={calidadIcon} alt="Calidad" />
-          <h4>Calidad</h4>
-          <p>Nos comprometemos a ofrecer productos de la más alta calidad.</p>
-        </IconItem>
-        <IconItem>
-          <img src={innovacionIcon} alt="Innovación" />
-          <h4>Innovación</h4>
-          <p>Utilizamos tecnología avanzada para opciones únicas.</p>
-        </IconItem>
-      </IconContainer>
-    </TextSection>
-    <CuadritoImage src={cuadritoImage} alt="Decoración Cuadrito" /> {/* Imagen en el centro con tamaño mayor */}
-    <ImageContainer>
-      <ModeloContainer>
-        <img src={hombreImage} alt="Modelo con camiseta" style={{ width: '100%', borderRadius: '15px' }} />
-      </ModeloContainer>
-    </ImageContainer>
-  </AboutContainer>
-);
+          <Card>
+            <img src={creatividadIcon} alt="Creatividad" />
+            <h4>Creatividad</h4>
+            <p>
+              Queremos que cada diseño exprese quién eres. Diseña libremente y refleja tu estilo sin límites.
+            </p>
+          </Card>
+        </CardsContainer>
+      </Container>
+    </AboutSection>
+  );
+};
 
 export default About;

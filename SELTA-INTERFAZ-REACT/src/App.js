@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import TopBar from './components/TopBar';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import HowItWorks from './components/HowItWorks';
@@ -32,6 +33,7 @@ function App() {
   return (
     <Router>
       <div className="App">
+        <TopBar />
         <Header />
         <ScrollHandler /> {/* Maneja el scroll basado en el estado */}
         <Routes>

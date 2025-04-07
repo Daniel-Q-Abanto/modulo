@@ -5,74 +5,92 @@ import polo1 from '../assets/polo1.png';
 import polo2 from '../assets/polo2.png';
 import polo3 from '../assets/polo3.png';
 
-const DiseñoContainer = styled.section`
-  background-color: #f3f3f3; // Color de fondo similar al de la imagen
-  border-radius: 20px; // Bordes redondeados
-  padding: 40px;
-  margin: 50px auto;
-  max-width: 1000px; // Ajuste de ancho máximo
-  text-align: center;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); // Sombra para destacar el cuadro
+const DiseñoWrapper = styled.section`
+  width: 100%;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  padding: 50px 20px;
+`;
+
+const DiseñoContainer = styled.div`
+  background-color: #f3f3f3;
+  border-radius: 25px;
+  padding: 50px 60px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 1400px;
+  border: 2px solid rgb(242, 247, 255);
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: 30px 20px;
+  }
 `;
 
 const Title = styled.h2`
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 20px;
-  font-family: Arial, sans-serif;
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: #222;
+  text-align: center;
+  margin-bottom: 40px;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
 `;
 
 const StepsContainer = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: center;
-  margin-top: 20px;
+  gap: 30px;
+  flex-wrap: wrap;
 `;
 
 const Step = styled.div`
   text-align: center;
-  max-width: 200px;
+  max-width: 250px;
 `;
 
 const StepImage = styled.img`
-  width: 100px; // Tamaño de la imagen
+  width: 120px;
   height: auto;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 `;
 
 const StepTitle = styled.h3`
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: bold;
-  color: #333;
+  color: #111;
+  margin-bottom: 8px;
 `;
 
 const StepDescription = styled.p`
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #666;
 `;
 
 const Diseño = () => (
-  <DiseñoContainer>
-    <Title>¿Cómo funciona tu diseño?</Title>
-    <StepsContainer>
-      <Step>
-        <StepImage src={polo1} alt="Diseña tus prendas" />
-        <StepTitle>1. Diseña tus prendas</StepTitle>
-        <StepDescription>Personaliza tus prendas eligiendo tus propios diseños y estilos.</StepDescription>
-      </Step>
-      <Step>
-        <StepImage src={polo2} alt="Revisa o Decide" />
-        <StepTitle>2. Revisa o Decide</StepTitle>
-        <StepDescription>Elige entre diferentes opciones de diseño y visualiza cómo quedará tu prenda.</StepDescription>
-      </Step>
-      <Step>
-        <StepImage src={polo3} alt="Disfruta tu Estilo" />
-        <StepTitle>3. Disfruta tu Estilo</StepTitle>
-        <StepDescription>Recibe tu prenda personalizada y luce un estilo único diseñado por ti.</StepDescription>
-      </Step>
-    </StepsContainer>
-  </DiseñoContainer>
+  <DiseñoWrapper>
+    <DiseñoContainer>
+      <Title>¿CÓMO FUNCIONA TU DISEÑO?</Title>
+      <StepsContainer>
+        <Step>
+          <StepImage src={polo1} alt="Diseña tus prendas" />
+          <StepTitle>DISEÑA TUS PRENDAS</StepTitle>
+          <StepDescription>Personaliza tus prendas eligiendo tus propios diseños y estilos.</StepDescription>
+        </Step>
+        <Step>
+          <StepImage src={polo2} alt="Revisa o Decide" />
+          <StepTitle>REVISA O DECIDE</StepTitle>
+          <StepDescription>Elige entre diferentes opciones de diseño y visualiza cómo quedará tu prenda.</StepDescription>
+        </Step>
+        <Step>
+          <StepImage src={polo3} alt="Disfruta tu Estilo" />
+          <StepTitle>DISFRUTA TU ESTILO</StepTitle>
+          <StepDescription>Recibe tu prenda personalizada y luce un estilo único diseñado por ti.</StepDescription>
+        </Step>
+      </StepsContainer>
+    </DiseñoContainer>
+  </DiseñoWrapper>
 );
 
 export default Diseño;
