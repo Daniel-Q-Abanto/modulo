@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { animateScroll as scroll } from 'react-scroll';
+import { scroller } from 'react-scroll'; // ✅ Cambio aquí
 import florImage from '../assets/flor.png';
 
 const HeaderContainer = styled.header`
+  position: sticky; /* 👈 Esto lo fija */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -12,6 +13,7 @@ const HeaderContainer = styled.header`
   background-color: #f7f7f7;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 `;
+
 
 const LogoContainer = styled.div`
   display: flex;
@@ -72,7 +74,6 @@ const ActionButton = styled.button`
   }
 `;
 
-
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -82,7 +83,11 @@ const Header = () => {
     if (location.pathname !== '/') {
       navigate('/', { state: { scrollTo: section } });
     } else {
-      scroll.scrollTo(section);
+      scroller.scrollTo(section, {
+        smooth: true,
+        duration: 600,
+        offset: -70,
+      });
     }
   };
 

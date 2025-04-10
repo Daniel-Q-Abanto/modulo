@@ -4,7 +4,6 @@ import TopBar from './components/TopBar';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import HowItWorks from './components/HowItWorks';
-import About from './components/About';
 import Services from './components/Services';
 import Diseño from './components/Diseño';
 import Register from './components/Register';
@@ -12,6 +11,7 @@ import Login from './components/Login';
 import Profile from './components/Profile';
 import Prompt from './components/Prompt';
 import { scroller } from 'react-scroll';
+import Personalizar from './components/Personalizar';
 
 const ScrollHandler = () => {
   const location = useLocation();
@@ -21,7 +21,7 @@ const ScrollHandler = () => {
       scroller.scrollTo(location.state.scrollTo, {
         smooth: true,
         duration: 500,
-        offset: -70, // Ajustar según la altura del header
+        offset: -70,
       });
     }
   }, [location]);
@@ -29,32 +29,40 @@ const ScrollHandler = () => {
   return null;
 };
 
+const MainApp = () => {
+  const location = useLocation();
+
+  return (
+    <>
+      <TopBar />
+      <Header />
+      <ScrollHandler />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <HowItWorks id="how-it-works" />
+              <Diseño />
+              <Services id="services" />
+            </>
+          }
+        />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/prompts" element={<Prompt />} />
+        <Route path="/personalizar" element={<Personalizar />} />
+      </Routes>
+      {!['/login', '/register', '/profile', '/prompts'].includes(location.pathname) && <Footer />}
+    </>
+  );
+};
+
 function App() {
   return (
     <Router>
-      <div className="App">
-        <TopBar />
-        <Header />
-        <ScrollHandler /> {/* Maneja el scroll basado en el estado */}
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <HowItWorks id="how-it-works" />
-                <Diseño />
-                <About id="about" />
-                <Services id="services" />
-              </>
-            }
-          />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/prompts" element={<Prompt />} />
-        </Routes>
-        <Footer />
-      </div>
+      <MainApp />
     </Router>
   );
 }

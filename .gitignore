@@ -1,0 +1,21 @@
+# Entornos virtuales
+env/
+venv/
+
+# Archivos de configuración
+*.env
+
+# Cache de Python
+__pycache__/
+*.py[cod]
+
+# Archivos de Node (si usas React)
+node_modules/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos temporales
+*.log
+*.tmp

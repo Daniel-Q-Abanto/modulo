@@ -1,61 +1,73 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
+import loginImage from '../assets/loginimage.png';
 
-const LoginContainer = styled.div`
+const Background = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #f7f7f7;
+  background-image: url(${loginImage});
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+`;
+
+const GlassCard = styled.div`
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 40px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
 `;
 
 const Title = styled.h2`
   font-size: 2.5rem;
   font-weight: bold;
-  color: #333;
-  margin-bottom: 20px;
+  color: #ff6868;
+  margin-bottom: 25px;
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  width: 100%;
-  max-width: 400px;
-  background: white;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
 const Input = styled.input`
   font-size: 1rem;
   padding: 10px;
   margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: none;
+  border-radius: 8px;
+  outline: none;
 `;
 
 const Button = styled.button`
   background-color: #ff6868;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
+  padding: 12px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 1rem;
+  margin-top: 10px;
 `;
 
 const LinkText = styled.p`
   font-size: 0.9rem;
-  color: #666;
-  margin-top: 10px;
+  color: #fff;
+  margin-top: 15px;
 
   a {
     color: #ff6868;
-    text-decoration: none;
     font-weight: bold;
+    text-decoration: none;
   }
 `;
 
@@ -87,7 +99,7 @@ const Login = () => {
       }
     } catch (error) {
       console.error('Error:', error);
-      setError('Ocurrió un error al iniciar sesión. Por favor, intenta nuevamente más tarde.');
+      setError('Ocurrió un error al iniciar sesión. Intenta nuevamente.');
     }
   };
 
@@ -96,32 +108,34 @@ const Login = () => {
   };
 
   return (
-    <LoginContainer>
-      <Title>Iniciar Sesión</Title>
-      <Form onSubmit={handleSubmit}>
-        <Input
-          type="email"
-          name="email"
-          placeholder="Correo electrónico"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        <Input
-          type="password"
-          name="password"
-          placeholder="Contraseña"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        <Button type="submit">Iniciar Sesión</Button>
-        {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
-      </Form>
-      <LinkText>
-        ¿No tienes una cuenta? <a href="/register">Regístrate</a>
-      </LinkText>
-    </LoginContainer>
+    <Background>
+      <GlassCard>
+        <Title>Iniciar Sesión</Title>
+        <Form onSubmit={handleSubmit}>
+          <Input
+            type="email"
+            name="email"
+            placeholder="Correo electrónico"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            type="password"
+            name="password"
+            placeholder="Contraseña"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          <Button type="submit">Iniciar Sesión</Button>
+          {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
+        </Form>
+        <LinkText>
+          ¿No tienes una cuenta? <a href="/register">Regístrate</a>
+        </LinkText>
+      </GlassCard>
+    </Background>
   );
 };
 
