@@ -44,7 +44,9 @@ const MockupImage = styled.img`
 
 const UploadedImage = styled.img`
   position: absolute;
-  max-width: 150px;
+  max-width: 180px;
+  max-height: 180px;
+  object-fit: contain;
   z-index: 2;
   top: 50%;
   left: 50%;
