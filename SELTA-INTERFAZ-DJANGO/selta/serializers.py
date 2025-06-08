@@ -1,31 +1,51 @@
 from rest_framework import serializers
 from .models import Usuario, Diseño, Personalizacion, Orden, Producto, HistorialIA, RolPermiso
 
-
-
+# Serializador para el modelo de roles
+class RolPermisoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RolPermiso
+        fields = ['id_rol', 'rol', 'permiso']  # Especificamos los campos que queremos exponer
 
 class UsuarioSerializer(serializers.ModelSerializer):
+    rol = RolPermisoSerializer(read_only=True)  # Solo lectura, no es necesario recibir desde el frontend
+    rol_id = serializers.PrimaryKeyRelatedField(
+        queryset=RolPermiso.objects.all(),
+        write_only=True,  # Escribimos este campo pero no lo leemos
+        source='rol',  # En lugar de 'rol_id', lo llamamos 'rol'
+        required=False  # Lo marcamos como no obligatorio
+    )
+
     class Meta:
         model = Usuario
-        fields = ['id_usuario', 'nombre_usuario', 'correo', 'contraseña', 'rol', 'fecha_registro']
+        fields = [
+            'id_usuario',
+            'correo',
+            'nombre_usuario',
+            'password',
+            'rol',  # Este campo es solo lectura
+            'rol_id',  # Este campo es solo para escritura y no es obligatorio
+            'is_active',
+            'is_staff',
+            'is_superuser',
+            'fecha_registro'
+        ]
         extra_kwargs = {
-            'contraseña': {'write_only': True},  # No exponer el campo de contraseña al cliente
-            'rol': {'read_only': True},         # Evitar que el rol sea editable
+            'password': {'write_only': True},
         }
 
     def create(self, validated_data):
-        user = Usuario(
-            correo=validated_data['correo'],
-            nombre_usuario=validated_data['nombre_usuario']
-        )
-        user.set_password(validated_data['contraseña'])  # Cifrar contraseña al crear usuario
+        password = validated_data.pop('password')  # 'password' en lugar de 'contraseña'
+        rol = validated_data.pop('rol', None)  # El rol debe ser asignado aquí si no se envía desde el frontend
+
+        # Asignamos el rol "trabajador" por defecto si no se ha enviado
+        if not rol:
+            rol = RolPermiso.objects.get(rol='trabajador')
+
+        user = Usuario(**validated_data, rol=rol)
+        user.set_password(password)  # Usamos 'set_password' para guardar la contraseña de forma segura
         user.save()
         return user
-
-    def update(self, instance, validated_data):
-        if 'contraseña' in validated_data:
-            instance.set_password(validated_data.pop('contraseña'))  # Cifrar la nueva contraseña
-        return super().update(instance, validated_data)
     
     
 class DiseñoSerializer(serializers.ModelSerializer):
@@ -60,11 +80,6 @@ class HistorialIASerializer(serializers.ModelSerializer):
         fields = ['id_historial', 'usuario', 'prompt', 'imagen_generada', 'fecha_generacion']
 
 
-
-class RolPermisoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = RolPermiso
-        fields = ['id_rol', 'rol', 'permiso']
 
 class TokenObtainSerializer(serializers.Serializer):
     email = serializers.EmailField()

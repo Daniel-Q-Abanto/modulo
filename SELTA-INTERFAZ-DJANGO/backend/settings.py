@@ -109,6 +109,9 @@ DATABASES = {
         'PASSWORD': '123456',          # Contraseña de MySQL
         'HOST': 'localhost',                  # Dirección del servidor (localhost si es local)
         'PORT': '3306',  
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 

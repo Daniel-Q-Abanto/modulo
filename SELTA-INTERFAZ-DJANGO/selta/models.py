@@ -1,37 +1,54 @@
-
-# Gestor de usuarios personalizado
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.hashers import make_password, check_password
+from django.utils import timezone
+
+
+
+from django.db import models
+from django.utils import timezone  # Asegúrate de importar timezone
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.contrib.auth.hashers import make_password, check_password
 
 
+# Modelo de Roles y Permisos
+class RolPermiso(models.Model):
+    id_rol = models.AutoField(primary_key=True)
+    rol = models.CharField(max_length=50, unique=True)
+    permiso = models.CharField(max_length=150)
+
+    def __str__(self):
+        return f"{self.rol} - {self.permiso}"
+
+    class Meta:
+        db_table = 'roles_y_permisos'
+
+
 # Gestor personalizado de usuarios
 class UsuarioManager(BaseUserManager):
-    def create_user(self, correo, password=None, **extra_fields):
+    def create_user(self, correo, nombre_usuario, password=None, **extra_fields):
         if not correo:
             raise ValueError("El correo es obligatorio")
         correo = self.normalize_email(correo)
-        user = self.model(correo=correo, **extra_fields)
-        if password:
-            user.set_password(password)
+        user = self.model(correo=correo, nombre_usuario=nombre_usuario, **extra_fields)
+        user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, correo, password=None, **extra_fields):
+    def create_superuser(self, correo, nombre_usuario, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-        return self.create_user(correo, password, **extra_fields)
+        return self.create_user(correo, nombre_usuario, password, **extra_fields)
 
 
-# Modelo de usuario
+# Modelo de usuario (backend del proyecto del usuario)
 class Usuario(AbstractBaseUser, PermissionsMixin):
     id_usuario = models.AutoField(primary_key=True)
+    correo = models.EmailField(unique=True, max_length=150)
     nombre_usuario = models.CharField(max_length=100)
-    correo = models.EmailField(max_length=150, unique=True)  # Campo único
-    contraseña = models.CharField(max_length=255)  # Almacena contraseñas cifradas
-    rol = models.CharField(max_length=10, choices=[('cliente', 'Cliente'), ('empleado', 'Empleado'), ('admin', 'Admin')], default='cliente')
-    fecha_registro = models.DateTimeField(auto_now_add=True)
-
+    password = models.CharField(max_length=255)  # Cambié 'contraseña' por 'password'
+    rol = models.ForeignKey(RolPermiso, on_delete=models.CASCADE)
+    fecha_registro = models.DateTimeField(default=timezone.now)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -40,15 +57,25 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'correo'
     REQUIRED_FIELDS = ['nombre_usuario']
 
+    def __str__(self):
+        return self.nombre_usuario
+
+    @property
+    def id(self):
+        return self.id_usuario
+
     def set_password(self, raw_password):
-        self.contraseña = make_password(raw_password)
+        self.password = make_password(raw_password)  # Guardamos la contraseña cifrada en 'password'
         self.save()
 
     def check_password(self, raw_password):
-        return check_password(raw_password, self.contraseña)
+        return check_password(raw_password, self.password)  # Comprobamos la contraseña con 'password'
 
     class Meta:
         db_table = 'usuarios'
+
+
+
 
 
 # Modelo de historial de IA
@@ -64,6 +91,7 @@ class HistorialIA(models.Model):
 
     class Meta:
         db_table = 'historial_IA'
+
 
 # Modelo de Diseños
 class Diseño(models.Model):
@@ -144,17 +172,3 @@ class Producto(models.Model):
 
     class Meta:
         db_table = 'productos'
-
-
-
-# Modelo de Roles y Permisos
-class RolPermiso(models.Model):
-    id_rol = models.AutoField(primary_key=True)
-    rol = models.CharField(max_length=50, unique=True)
-    permiso = models.CharField(max_length=150)
-
-    def __str__(self):
-        return f"{self.rol} - {self.permiso}"
-
-    class Meta:
-        db_table = 'roles_y_permisos'

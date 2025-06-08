@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useNavigate, useLocation } from 'react-router-dom';
-import loginImage from '../assets/loginimage.png';
+import { useNavigate } from 'react-router-dom';
+import { TextField, Button } from '@mui/material';
+import loginImage from '../assets/loginimage.png'; // Asegúrate de tener esta imagen
 
 const Background = styled.div`
   display: flex;
@@ -39,67 +40,64 @@ const Form = styled.form`
   flex-direction: column;
 `;
 
-const Input = styled.input`
-  font-size: 1rem;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: none;
-  border-radius: 8px;
-  outline: none;
-`;
-
-const Button = styled.button`
+const ButtonStyled = styled.button`
   background-color: #ff6868;
   color: white;
   border: none;
   padding: 12px;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 1rem;
-  margin-top: 10px;
+  margin-top: 15px;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #ff3d3d;
+  }
 `;
 
-const LinkText = styled.p`
+const ErrorMessage = styled.p`
+  color: red;
   font-size: 0.9rem;
-  color: #fff;
-  margin-top: 15px;
-
-  a {
-    color: #ff6868;
-    font-weight: bold;
-    text-decoration: none;
-  }
+  margin-top: -10px;
+  margin-bottom: 10px;
 `;
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+
     try {
       const response = await fetch('http://127.0.0.1:8000/api/login/', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
       const data = await response.json();
 
       if (response.ok) {
+        // Guardar el token
         localStorage.setItem('access_token', data.access);
-        const redirectPath = location.state?.from || '/prompts';
-        navigate(redirectPath);
+
+        // Obtener el rol y redirigir según el tipo de usuario
+        const userRole = data.role;
+
+        if (userRole === 'administrador') {
+          navigate('/prompts');  // Redirigir a panel de administrador
+        } else if (userRole === 'trabajador') {
+          navigate('/prompts');  // Redirigir a panel de trabajador
+        }
       } else {
-        setError('Credenciales incorrectas. Por favor, intenta nuevamente.');
+        setError(data.detail || 'Credenciales incorrectas.');
       }
     } catch (error) {
-      console.error('Error:', error);
-      setError('Ocurrió un error al iniciar sesión. Intenta nuevamente.');
+      setError('Error en el servidor. Intenta más tarde.');
     }
   };
 
@@ -112,28 +110,29 @@ const Login = () => {
       <GlassCard>
         <Title>Iniciar Sesión</Title>
         <Form onSubmit={handleSubmit}>
-          <Input
+          <TextField
+            label="Correo electrónico"
             type="email"
+            fullWidth
+            margin="normal"
             name="email"
-            placeholder="Correo electrónico"
             value={formData.email}
             onChange={handleChange}
             required
           />
-          <Input
+          <TextField
+            label="Contraseña"
             type="password"
+            fullWidth
+            margin="normal"
             name="password"
-            placeholder="Contraseña"
             value={formData.password}
             onChange={handleChange}
             required
           />
-          <Button type="submit">Iniciar Sesión</Button>
-          {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
+          <ButtonStyled type="submit">Iniciar sesión</ButtonStyled>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
         </Form>
-        <LinkText>
-          ¿No tienes una cuenta? <a href="/register">Regístrate</a>
-        </LinkText>
       </GlassCard>
     </Background>
   );

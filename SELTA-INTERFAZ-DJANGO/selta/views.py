@@ -4,6 +4,9 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.contrib.auth import get_user_model
+from rest_framework import status
+
 
 from openai import OpenAI   
 
@@ -18,45 +21,65 @@ import os
 client = OpenAI(api_key="")
 
 import requests
+# Vista de registro
 class RegisterView(APIView):
     permission_classes = [AllowAny]
-    def post(self, request):
-        serializer = UsuarioSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Usuario registrado exitosamente"}, status=201)
-        return Response(serializer.errors, status=400)
 
+    def post(self, request):
+        try:
+            # Si el rol no se pasa desde el frontend, se asignará "trabajador" por defecto
+            request.data['rol'] = RolPermiso.objects.get(rol='trabajador').id_rol
+
+            serializer = UsuarioSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({"message": "Usuario registrado exitosamente."}, status=status.HTTP_201_CREATED)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except RolPermiso.DoesNotExist:
+            return Response({"detail": "El rol 'trabajador' no existe en la base de datos."}, status=status.HTTP_400_BAD_REQUEST)
+
+# Login de usuario
 class LoginView(APIView):
     permission_classes = [AllowAny]
+
     def post(self, request):
         correo = request.data.get('email')
-        contrasena = request.data.get('password')
+        password = request.data.get('password')
+
         try:
-            user = Usuario.objects.get(correo=correo)
-            if user.check_password(contrasena):
+            user = get_user_model().objects.get(correo=correo)
+            if user.check_password(password):
+                # Generar el token para el usuario
                 refresh = RefreshToken.for_user(user)
+
+                # Obtener el rol del usuario y devolverlo junto con el token
+                user_role = user.rol.rol  # Asegúrate de que el modelo de usuario tiene el rol
+
                 return Response({
                     'access': str(refresh.access_token),
-                    'refresh': str(refresh)
+                    'refresh': str(refresh),
+                    'role': user_role,  # Devolver el rol del usuario
                 })
             else:
                 return Response({"detail": "Contraseña incorrecta"}, status=400)
-        except Usuario.DoesNotExist:
+        except get_user_model().DoesNotExist:
             return Response({"detail": "Usuario no encontrado"}, status=404)
-
+        
 class ProfileView(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+
     def get(self, request):
         serializer = UsuarioSerializer(request.user)
         return Response(serializer.data, status=200)
+
     def put(self, request):
         serializer = UsuarioSerializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=200)
         return Response(serializer.errors, status=400)
+    
 
 class GenerarImagenAPIView(APIView):
     authentication_classes = [JWTAuthentication]

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { Alert, Button, TextField, Box, Container, Grid, Typography } from '@mui/material';
 import loginImage from '../assets/loginimage.png';
 
 const Background = styled.div`
@@ -48,7 +49,7 @@ const Input = styled.input`
   outline: none;
 `;
 
-const Button = styled.button`
+const ButtonStyled = styled.button`
   background-color: #ff6868;
   color: white;
   border: none;
@@ -59,18 +60,6 @@ const Button = styled.button`
   margin-top: 10px;
 `;
 
-const LinkText = styled.p`
-  font-size: 0.9rem;
-  color: #fff;
-  margin-top: 15px;
-
-  a {
-    color: #ff6868;
-    font-weight: bold;
-    text-decoration: none;
-  }
-`;
-
 const ErrorMessage = styled.p`
   color: red;
   font-size: 0.9rem;
@@ -78,37 +67,67 @@ const ErrorMessage = styled.p`
   margin-bottom: 10px;
 `;
 
+const LinkText = styled.p`
+  font-size: 0.9rem;
+  color: #fff;
+  margin-top: 15px;
+  a {
+    color: #ff6868;
+    font-weight: bold;
+    text-decoration: none;
+  }
+`;
+
 const Register = () => {
   const [formData, setFormData] = useState({
     correo: '',
-    contraseña: '',
+    password: '',
+    confirmPassword: '',
     nombre_usuario: '',
   });
-  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+  const [severity, setSeverity] = useState('error');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setMessage(''); 
+
+    if (formData.password !== formData.confirmPassword) {
+      setMessage('Las contraseñas no coinciden');
+      setSeverity('error');
+      return;
+    }
 
     try {
       const response = await fetch('http://127.0.0.1:8000/api/register/', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          correo: formData.correo,
+          nombre_usuario: formData.nombre_usuario,
+          password: formData.password,
+        }),
       });
 
       if (response.ok) {
-        alert('Registro exitoso');
-        navigate('/login');
+        setMessage('Usuario registrado con éxito');
+        setSeverity('success');
+        setFormData({
+          correo: '',
+          password: '',
+          confirmPassword: '',
+          nombre_usuario: '',
+        });
+        setTimeout(() => navigate('/login'), 2000);  // Redirigir después de 2 segundos
       } else {
         const data = await response.json();
-        setError(data.detail || 'Error al registrar');
+        setMessage(data.detail || 'Error al registrar');
+        setSeverity('error');
       }
     } catch (error) {
-      setError('Error en el servidor. Intenta más tarde.');
+      setMessage('Error en el servidor. Intenta más tarde.');
+      setSeverity('error');
     }
   };
 
@@ -121,32 +140,47 @@ const Register = () => {
       <GlassCard>
         <Title>Regístrate</Title>
         <Form onSubmit={handleSubmit}>
-          <Input
-            type="text"
-            name="nombre_usuario"
-            placeholder="Nombre de usuario"
-            value={formData.nombre_usuario}
-            onChange={handleChange}
-            required
-          />
-          <Input
+          <TextField
+            label="Correo electrónico"
             type="email"
+            fullWidth
+            margin="normal"
             name="correo"
-            placeholder="Correo electrónico"
             value={formData.correo}
             onChange={handleChange}
             required
           />
-          <Input
-            type="password"
-            name="contraseña"
-            placeholder="Contraseña"
-            value={formData.contraseña}
+          <TextField
+            label="Nombre de usuario"
+            fullWidth
+            margin="normal"
+            name="nombre_usuario"
+            value={formData.nombre_usuario}
             onChange={handleChange}
             required
           />
-          {error && <ErrorMessage>{error}</ErrorMessage>}
-          <Button type="submit">Registrarse</Button>
+          <TextField
+            label="Contraseña"
+            type="password"
+            fullWidth
+            margin="normal"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          <TextField
+            label="Confirmar contraseña"
+            type="password"
+            fullWidth
+            margin="normal"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+          {message && <Alert severity={severity} sx={{ mt: 2, width: '100%' }}>{message}</Alert>}
+          <ButtonStyled type="submit">Registrar</ButtonStyled>
         </Form>
         <LinkText>
           ¿Ya tienes una cuenta? <a href="/login">Inicia sesión</a>
